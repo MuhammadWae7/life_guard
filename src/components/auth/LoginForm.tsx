@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Link } from 'react-router-dom';
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from 'react-router-dom';
+const navigate = useNavigate();
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +17,7 @@ const LoginForm: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Input validation
     if (!email) {
       toast({
@@ -25,7 +27,7 @@ const LoginForm: React.FC = () => {
       });
       return;
     }
-    
+
     if (!password) {
       toast({
         title: "Error",
@@ -34,7 +36,7 @@ const LoginForm: React.FC = () => {
       });
       return;
     }
-    
+
     // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -45,7 +47,7 @@ const LoginForm: React.FC = () => {
       });
       return;
     }
-    
+
     // Password strength validation (in a real app, this would be on registration)
     if (password.length < 8) {
       toast({
@@ -55,35 +57,38 @@ const LoginForm: React.FC = () => {
       });
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       // Store login info in localStorage instead of sessionStorage for persistence
       localStorage.setItem('isLoggedIn', 'true');
-      
+
       // In a real implementation, you would get the deviceId from the server response
       const mockDeviceId = "GSM808-DEMO-1234";
-      
+
       // Use the login function from useAuth
       login("demo-jwt-token", mockDeviceId);
-      
+
       // Store last login time for security purposes
       localStorage.setItem('lastLoginTime', new Date().toISOString());
-      
+
       toast({
         title: "Success",
         description: "You have successfully logged in",
       });
-      
+
       // Redirect to dashboard
-      window.location.href = '/dashboard';
+      // Import useNavigate at the top of the file
+
+      // Use React Router navigation
+      navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      
+
       // More specific error handling
       let errorMessage = "Failed to log in. Please check your credentials.";
-      
+
       if (error instanceof Error) {
         if (error.message.includes('network')) {
           errorMessage = "Network error. Please check your internet connection.";
@@ -93,7 +98,7 @@ const LoginForm: React.FC = () => {
           errorMessage = "Too many login attempts. Please try again later.";
         }
       }
-      
+
       toast({
         title: "Error",
         description: errorMessage,

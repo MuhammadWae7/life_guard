@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from 'react-router-dom';
+const navigate = useNavigate();
 
 const SignupForm: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -50,7 +52,10 @@ const SignupForm: React.FC = () => {
       });
 
       // Redirect to dashboard directly
-      window.location.href = '/dashboard';
+      // Import useNavigate at the top of the file
+      const navigate = useNavigate();      
+      // Use React Router navigation
+      navigate('/dashboard');
     } catch (error) {
       console.error('Signup error:', error);
       toast({
