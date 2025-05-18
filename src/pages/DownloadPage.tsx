@@ -1,11 +1,13 @@
 
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { ArrowDown, Smartphone, Tablet, Laptop, ExternalLink } from 'lucide-react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { ArrowDown, ExternalLink, Smartphone, Tablet, Laptop } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const DownloadPage = () => {
   const [showDownloadMessage, setShowDownloadMessage] = useState(false);
+  const { t } = useTranslation();
   
   const handleDownload = () => {
     setShowDownloadMessage(true);
@@ -21,10 +23,9 @@ const DownloadPage = () => {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">Download Life Guard</h1>
+          <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">{t('download.title', 'Download Life Guard')}</h1>
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-            Access your health data anytime, anywhere with our mobile application. 
-            Stay connected to your vital signs and receive real-time alerts.
+            {t('download.subtitle', 'Access your health data anytime, anywhere with our mobile application. Stay connected to your vital signs and receive real-time alerts.')}
           </p>
           
           <div className="relative">
@@ -39,8 +40,8 @@ const DownloadPage = () => {
                 size="lg" 
                 className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
               >
-                <ArrowDown className="mr-2" />
-                Download Android App
+                <ArrowDown className={`${document.documentElement.dir === 'rtl' ? 'ml-2' : 'mr-2'} transform-rtl`} />
+                {t('download.button', 'Download Android App')}
               </Button>
             </motion.div>
             
@@ -51,12 +52,12 @@ const DownloadPage = () => {
                 exit={{ opacity: 0, y: 20 }}
                 className="absolute left-1/2 transform -translate-x-1/2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 px-4 py-2 rounded-lg shadow-md"
               >
-                Download starting...
+                {t('download.starting', 'Download starting...')}
               </motion.div>
             )}
             
             <div className="mt-6 text-sm text-gray-500 dark:text-gray-400">
-              Latest version: 1.2.3 | Released: May 15, 2023
+              {t('download.version', 'Latest version: 1.2.3 | Released: May 15, 2023')}
             </div>
           </div>
         </motion.div>
@@ -71,12 +72,12 @@ const DownloadPage = () => {
             <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <Smartphone className="text-blue-500 h-8 w-8" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Mobile App</h3>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">{t('download.mobileApp', 'Mobile App')}</h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Our Android app offers a streamlined experience optimized for smartphones.
+              {t('download.mobileDesc', 'Our Android app offers a streamlined experience optimized for smartphones.')}
             </p>
             <Button variant="outline" onClick={handleDownload} className="w-full dark:border-gray-700 dark:text-gray-200">
-              Download for Android
+              {t('download.button', 'Download for Android')}
             </Button>
           </motion.div>
           
@@ -89,12 +90,12 @@ const DownloadPage = () => {
             <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <Tablet className="text-blue-500 h-8 w-8" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Tablet Version</h3>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">{t('download.tabletVersion', 'Tablet Version')}</h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Our tablet interface provides expanded visualizations and easier data entry.
+              {t('download.tabletDesc', 'Our tablet interface provides expanded visualizations and easier data entry.')}
             </p>
             <Button variant="outline" onClick={handleDownload} className="w-full dark:border-gray-700 dark:text-gray-200">
-              Download for Tablets
+              {t('nav.download', 'Download for Tablets')}
             </Button>
           </motion.div>
           
@@ -107,13 +108,13 @@ const DownloadPage = () => {
             <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <Laptop className="text-blue-500 h-8 w-8" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Web App</h3>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">{t('download.webApp', 'Web App')}</h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Use our progressive web app for a full-featured experience on any device.
+              {t('download.webDesc', 'Use our progressive web app for a full-featured experience on any device.')}
             </p>
             <Button variant="outline" className="w-full dark:border-gray-700 dark:text-gray-200">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Use Web App
+              <ExternalLink className={`${document.documentElement.dir === 'rtl' ? 'ml-2' : 'mr-2'} h-4 w-4 transform-rtl`} />
+              {t('download.useWebApp', 'Use Web App')}
             </Button>
           </motion.div>
         </div>
@@ -124,25 +125,25 @@ const DownloadPage = () => {
           transition={{ duration: 0.5, delay: 0.7 }}
           className="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700"
         >
-          <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Why Download Our App?</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">{t('download.whyDownload', 'Why Download Our App?')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Features:</h3>
+              <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">{t('download.features', 'Features:')}</h3>
               <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-                <li>Real-time health monitoring</li>
-                <li>Customizable alerts and notifications</li>
-                <li>Historical data visualization</li>
-                <li>Health trends and insights</li>
-                <li>Secure data encryption</li>
+                <li>{t('download.feature1', 'Real-time health monitoring')}</li>
+                <li>{t('download.feature2', 'Customizable alerts and notifications')}</li>
+                <li>{t('download.feature3', 'Historical data visualization')}</li>
+                <li>{t('download.feature4', 'Health trends and insights')}</li>
+                <li>{t('download.feature5', 'Secure data encryption')}</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Requirements:</h3>
+              <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">{t('download.requirements', 'Requirements:')}</h3>
               <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-                <li>Android 7.0 or higher</li>
-                <li>At least 50MB of storage space</li>
-                <li>Internet connection for data synchronization</li>
-                <li>GPS for emergency location services (optional)</li>
+                <li>{t('download.req1', 'Android 7.0 or higher')}</li>
+                <li>{t('download.req2', 'At least 50MB of storage space')}</li>
+                <li>{t('download.req3', 'Internet connection for data synchronization')}</li>
+                <li>{t('download.req4', 'GPS for emergency location services (optional)')}</li>
               </ul>
             </div>
           </div>

@@ -107,6 +107,13 @@ const Navigation: React.FC = () => {
       // Set RTL direction for Arabic
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       
+      // Add RTL class to body for additional styling hooks
+      if (lang === 'ar') {
+        document.body.classList.add('rtl');
+      } else {
+        document.body.classList.remove('rtl');
+      }
+      
       // Use safe fallbacks for translations that might not exist yet
       const translationKeys = {
         en: {
@@ -194,14 +201,14 @@ const Navigation: React.FC = () => {
     <nav className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-gray-900/80">
       <div className="container mx-auto px-4">
         <div className="flex justify-between h-16 items-center">
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className={`flex items-center ${language === 'ar' ? 'space-x-reverse' : 'space-x-2'}`}>
             <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
               <span className="text-white font-bold text-lg">LG</span>
             </div>
             <span className="text-xl font-bold text-gray-800 dark:text-white">Life Guard</span>
           </Link>
           
-          <div className="hidden md:flex items-center space-x-4">
+          <div className={`hidden md:flex items-center ${language === 'ar' ? 'space-x-reverse' : 'space-x-4'}`}>
             {navLinks.map(link => (
               <Link 
                 key={link.to} 
@@ -217,7 +224,7 @@ const Navigation: React.FC = () => {
             ))}
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center ${language === 'ar' ? 'space-x-reverse' : 'space-x-2'}`}>
             {/* PWA Install Button - Always visible for testing */}
             <Button 
               variant="ghost" 

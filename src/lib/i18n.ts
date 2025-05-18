@@ -176,6 +176,32 @@ const resources = {
       'auth.login': 'Connexion',
       'auth.signup': 'Inscription',
       'auth.forgotPassword': 'Mot de passe oublié?',
+      
+      // Download page
+      'download.title': 'Télécharger Life Guard',
+      'download.subtitle': 'Accédez à vos données de santé n\'importe quand, n\'importe où avec notre application mobile.',
+      'download.button': 'Télécharger l\'application Android',
+      'download.starting': 'Téléchargement en cours...',
+      'download.version': 'Dernière version: 1.2.3 | Publiée le: 15 mai 2023',
+      'download.mobileApp': 'Application Mobile',
+      'download.mobileDesc': 'Notre application Android offre une expérience optimisée pour les smartphones.',
+      'download.tabletVersion': 'Version Tablette',
+      'download.tabletDesc': 'Notre interface tablette fournit des visualisations étendues et une saisie de données plus facile.',
+      'download.webApp': 'Application Web',
+      'download.webDesc': 'Utilisez notre application web progressive pour une expérience complète sur n\'importe quel appareil.',
+      'download.whyDownload': 'Pourquoi télécharger notre application?',
+      'download.features': 'Fonctionnalités:',
+      'download.requirements': 'Prérequis:',
+      'download.feature1': 'Surveillance de santé en temps réel',
+      'download.feature2': 'Alertes et notifications personnalisables',
+      'download.feature3': 'Visualisation des données historiques',
+      'download.feature4': 'Tendances et insights de santé',
+      'download.feature5': 'Chiffrement sécurisé des données',
+      'download.req1': 'Android 7.0 ou supérieur',
+      'download.req2': 'Au moins 50MB d\'espace de stockage',
+      'download.req3': 'Connexion internet pour la synchronisation des données',
+      'download.req4': 'GPS pour les services de localisation d\'urgence (optionnel)',
+      'download.useWebApp': 'Utiliser l\'application Web'
     }
   }
 };
