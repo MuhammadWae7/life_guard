@@ -224,10 +224,10 @@ const Navigation: React.FC = () => {
             ))}
           </div>
           
-          <div className="flex items-center ${language === 'ar' ? 'space-x-reverse' : 'space-x-2'}`}>
+          <div className="flex items-center ${language === 'ar' ? 'space-x-reverse' : 'space-x-2'}`}">
             {/* PWA Install Button - Always visible for testing */}
             <Button 
-              variant="ghost" 
+              variant="ghost"
               size="icon" 
               onClick={handleInstallClick} 
               className="h-9 w-9 relative"
