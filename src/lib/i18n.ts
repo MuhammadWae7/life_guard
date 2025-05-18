@@ -19,6 +19,29 @@ const resources = {
       'nav.login': 'Login',
       'nav.signup': 'Sign Up',
       'nav.logout': 'Logout',
+      'nav.about': 'About',
+      'nav.arduino': 'Arduino',
+      'nav.download': 'Download',
+      'nav.contact': 'Contact',
+      
+      // Home page
+      'home.title': 'Your Health',
+      'home.subtitle': 'Monitored in',
+      'home.realtime': 'Real-Time',
+      'home.description': 'Life Guard provides continuous monitoring of your vital health metrics, giving you peace of mind and valuable insights.',
+      'home.getStarted': 'Get Started',
+      'home.learnMore': 'Learn More',
+      'home.howItWorks': 'How Life Guard Works',
+      'home.readyToMonitor': 'Ready to monitor your health?',
+      'home.joinUsers': 'Join thousands of users who are taking control of their health with Life Guard\'s real-time monitoring solution.',
+      
+      // Vitals
+      'vitals.heartRate': 'Heart Rate',
+      'vitals.bpm': 'Beats per minute',
+      'vitals.temperature': 'Temperature',
+      'vitals.bodyTemp': 'Body temperature',
+      'vitals.bloodOxygen': 'Blood Oxygen',
+      'vitals.spo2': 'SpO2 Saturation',
       
       // Dashboard
       'dashboard.title': 'Dashboard',
@@ -54,7 +77,30 @@ const resources = {
       'nav.login': 'تسجيل الدخول',
       'nav.signup': 'إنشاء حساب',
       'nav.logout': 'تسجيل الخروج',
+      'nav.about': 'حول',
+      'nav.arduino': 'أردوينو',
+      'nav.download': 'تحميل',
+      'nav.contact': 'اتصل بنا',
       
+      // Home page
+      'home.title': 'صحتك',
+      'home.subtitle': 'تحت المراقبة',
+      'home.realtime': 'في الوقت الحقيقي',
+      'home.description': 'يوفر لايف جارد مراقبة مستمرة لمؤشراتك الصحية الحيوية، مما يمنحك راحة البال ورؤى قيمة.',
+      'home.getStarted': 'ابدأ الآن',
+      'home.learnMore': 'اعرف المزيد',
+      'home.howItWorks': 'كيف يعمل لايف جارد',
+      'home.readyToMonitor': 'هل أنت مستعد لمراقبة صحتك؟',
+      'home.joinUsers': 'انضم إلى آلاف المستخدمين الذين يتحكمون في صحتهم مع حل المراقبة في الوقت الحقيقي من لايف جارد.',
+      
+      // Vitals
+      'vitals.heartRate': 'معدل ضربات القلب',
+      'vitals.bpm': 'نبضة في الدقيقة',
+      'vitals.temperature': 'درجة الحرارة',
+      'vitals.bodyTemp': 'حرارة الجسم',
+      'vitals.bloodOxygen': 'أكسجين الدم',
+      'vitals.spo2': 'تشبع الأكسجين',
+
       // Dashboard
       'dashboard.title': 'لوحة التحكم',
       'dashboard.welcome': 'مرحبًا بك في لايف جارد',
@@ -89,7 +135,30 @@ const resources = {
       'nav.login': 'Connexion',
       'nav.signup': 'Inscription',
       'nav.logout': 'Déconnexion',
+      'nav.about': 'À propos',
+      'nav.arduino': 'Arduino',
+      'nav.download': 'Télécharger',
+      'nav.contact': 'Contact',
       
+      // Home page
+      'home.title': 'Votre Santé',
+      'home.subtitle': 'Surveillée en',
+      'home.realtime': 'Temps Réel',
+      'home.description': 'Life Guard fournit une surveillance continue de vos indicateurs de santé vitaux, vous donnant tranquillité d\'esprit et des informations précieuses.',
+      'home.getStarted': 'Commencer',
+      'home.learnMore': 'En savoir plus',
+      'home.howItWorks': 'Comment fonctionne Life Guard',
+      'home.readyToMonitor': 'Prêt à surveiller votre santé?',
+      'home.joinUsers': 'Rejoignez des milliers d\'utilisateurs qui prennent le contrôle de leur santé avec la solution de surveillance en temps réel de Life Guard.',
+      
+      // Vitals
+      'vitals.heartRate': 'Fréquence Cardiaque',
+      'vitals.bpm': 'Battements par minute',
+      'vitals.temperature': 'Température',
+      'vitals.bodyTemp': 'Température corporelle',
+      'vitals.bloodOxygen': 'Oxygène Sanguin',
+      'vitals.spo2': 'Saturation SpO2',
+            
       // Dashboard
       'dashboard.title': 'Tableau de bord',
       'dashboard.welcome': 'Bienvenue sur Life Guard',

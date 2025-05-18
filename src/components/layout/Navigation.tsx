@@ -159,10 +159,18 @@ const Navigation: React.FC = () => {
         });
       }
     } else {
-      // If no install prompt is available, provide instructions
+      // If no install prompt is available, initiate direct download
+      const apkUrl = '/downloads/lifeguard-app.apk'; // Path to your APK file
+      const link = document.createElement('a');
+      link.href = apkUrl;
+      link.download = 'lifeguard-app.apk';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
       toast({
-        title: "Installation",
-        description: "To install our app, use the install option in your browser menu.",
+        title: "Download Started",
+        description: "Your download has started. Please install the app after downloading.",
         variant: "default",
       });
     }

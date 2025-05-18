@@ -1,9 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Heart, Activity, ThermometerSun } from 'lucide-react';
 import VitalCard from '@/components/vitals/VitalCard';
+import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
 
 const HomePage: React.FC = () => {
   const [vitalSigns, setVitalSigns] = useState({
@@ -11,8 +13,14 @@ const HomePage: React.FC = () => {
     spo2: 98,
     temperature: 36.6
   });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
+    // Check login status
+    const loginStatus = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(loginStatus);
+    
     const interval = setInterval(() => {
       // Simulate changing vitals
       setVitalSigns({
@@ -32,31 +40,32 @@ const HomePage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div className="space-y-6 animate-fade-in">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-              Your Health, <br />Monitored in <span className="text-blue-500">Real-Time</span>
+              {t('home.title', 'Your Health')}, <br />{t('home.subtitle', 'Monitored in')} <span className="text-blue-500">{t('home.realtime', 'Real-Time')}</span>
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              Life Guard provides continuous monitoring of your vital health metrics, giving you peace of mind and valuable insights.
+              {t('home.description', 'Life Guard provides continuous monitoring of your vital health metrics, giving you peace of mind and valuable insights.')}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link to="/signup">
                 <Button size="lg" className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
-                  Get Started
+                  {t('home.getStarted', 'Get Started')}
                 </Button>
               </Link>
               <Link to="/about">
                 <Button size="lg" variant="outline" className="dark:border-gray-700 dark:text-gray-200">
-                  Learn More
+                  {t('home.learnMore', 'Learn More')}
                 </Button>
               </Link>
             </div>
           </div>
           
+          {/* Vital cards section remains unchanged */}
           <div className="grid grid-cols-1 gap-6">
-            <VitalCard title="Heart Rate" subtitle="Beats per minute" value={vitalSigns.heartRate} unit="bpm" icon={<Heart className="text-red-500" size={24} />} status={vitalSigns.heartRate < 60 || vitalSigns.heartRate > 100 ? "danger" : "normal"} animate={true} />
+            <VitalCard title={t('vitals.heartRate', 'Heart Rate')} subtitle={t('vitals.bpm', 'Beats per minute')} value={vitalSigns.heartRate} unit="bpm" icon={<Heart className="text-red-500" size={24} />} status={vitalSigns.heartRate < 60 || vitalSigns.heartRate > 100 ? "danger" : "normal"} animate={true} />
             
-            <VitalCard title="Temperature" subtitle="Body temperature" value={vitalSigns.temperature} unit="°C" icon={<ThermometerSun className="text-amber-500" size={24} />} status={vitalSigns.temperature < 36 || vitalSigns.temperature > 37.8 ? "danger" : "normal"} animate={true} />
+            <VitalCard title={t('vitals.temperature', 'Temperature')} subtitle={t('vitals.bodyTemp', 'Body temperature')} value={vitalSigns.temperature} unit="°C" icon={<ThermometerSun className="text-amber-500" size={24} />} status={vitalSigns.temperature < 36 || vitalSigns.temperature > 37.8 ? "danger" : "normal"} animate={true} />
             
-            <VitalCard title="Blood Oxygen" subtitle="SpO2 Saturation" value={vitalSigns.spo2} unit="%" icon={<Activity className="text-blue-500" size={24} />} status={vitalSigns.spo2 < 95 ? "danger" : "normal"} animate={true} />
+            <VitalCard title={t('vitals.bloodOxygen', 'Blood Oxygen')} subtitle={t('vitals.spo2', 'SpO2 Saturation')} value={vitalSigns.spo2} unit="%" icon={<Activity className="text-blue-500" size={24} />} status={vitalSigns.spo2 < 95 ? "danger" : "normal"} animate={true} />
           </div>
         </div>
       </section>
@@ -64,7 +73,7 @@ const HomePage: React.FC = () => {
       {/* Features Section */}
       <section className="bg-white dark:bg-gray-800 py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">How Life Guard Works</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">{t('home.howItWorks', 'How Life Guard Works')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-6 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all bg-white dark:bg-gray-700">
               <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center mb-4">
@@ -97,27 +106,48 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-900 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to monitor your health?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Join thousands of users who are taking control of their health with Life Guard's real-time monitoring solution.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Link to="/signup">
-              <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
-                Sign Up Now
-              </Button>
-            </Link>
-            <Link to="/login">
-              <Button size="lg" variant="outline" className="border-white text-base bg-zinc-50 text-sky-900">
-                Login
-              </Button>
-            </Link>
+      {/* Call to Action - This section should be conditionally rendered */}
+      {!isLoggedIn && (
+        <section className="py-20 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-900 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-4">{t('home.readyToMonitor', 'Ready to monitor your health?')}</h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto">
+              {t('home.joinUsers', 'Join thousands of users who are taking control of their health with Life Guard\'s real-time monitoring solution.')}
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link to="/signup">
+                <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
+                  {t('auth.signup', 'Sign Up Now')}
+                </Button>
+              </Link>
+              <Link to="/login">
+                <Button size="lg" variant="outline" className="border-white text-base bg-zinc-50 text-sky-900">
+                  {t('auth.login', 'Login')}
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+      
+      {/* Show a welcome dashboard preview for logged in users */}
+      {isLoggedIn && (
+        <section className="py-20 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-900 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-4">{t('dashboard.welcome', 'Welcome to Life Guard')}</h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto">
+              {t('dashboard.accessMessage', 'Access your health dashboard to view your latest vital signs and health insights.')}
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link to="/dashboard">
+                <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
+                  {t('dashboard.viewDashboard', 'View Dashboard')}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };
