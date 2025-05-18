@@ -3949,3 +3949,4 @@ dist-ssr
 
 # Editor directories and files
 .
+.vercel
