@@ -1,17 +1,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Heart, Globe, Moon, Sun, Download, Menu, X } from 'lucide-react';
-import { 
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { Menu, Moon, Sun, Globe, Download } from "lucide-react";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useToast } from '@/hooks/use-toast';
-import i18n from '@/lib/i18n'; // Import i18n
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import i18n from '@/lib/i18n';
+import { useTranslation } from 'react-i18next';
 
 const Navigation: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -21,6 +26,7 @@ const Navigation: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const location = useLocation();
   const { toast } = useToast();
+  const { t } = useTranslation();
   
   useEffect(() => {
     const loginStatus = localStorage.getItem('isLoggedIn') === 'true';
@@ -86,32 +92,35 @@ const Navigation: React.FC = () => {
     setLanguage(lang);
     localStorage.setItem('language', lang);
     
-    // Change language in i18n
-    i18n.changeLanguage(lang);
-    
-    // Set RTL for Arabic
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    
-    // Translation messages based on selected language
-    const messages = {
-      en: {
-        title: 'Language Changed',
-        description: 'The application language has been updated to English.'
-      },
-      ar: {
-        title: 'تم تغيير اللغة',
-        description: 'تم تحديث لغة التطبيق إلى العربية.'
-      },
-      fr: {
-        title: 'Langue Changée',
-        description: 'La langue de l\'application a été mise à jour en français.'
-      }
-    };
-    
-    toast({
-      title: messages[lang].title,
-      description: messages[lang].description,
-      variant: "default",
+    // Use i18next to change the language
+    i18n.changeLanguage(lang).then(() => {
+      // Force re-render by updating state
+      setLanguage(lang);
+      
+      // Set RTL direction for Arabic
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      
+      // Use safe fallbacks for translations that might not exist yet
+      const translationKeys = {
+        en: {
+          changed: 'Language changed',
+          updated: 'The application language has been updated.'
+        },
+        ar: {
+          changed: 'تم تغيير اللغة',
+          updated: 'تم تحديث لغة التطبيق.'
+        },
+        fr: {
+          changed: 'Langue changée',
+          updated: 'La langue de l\'application a été mise à jour.'
+        }
+      };
+      
+      toast({
+        title: translationKeys[lang]?.changed || 'Language changed',
+        description: translationKeys[lang]?.updated || 'The application language has been updated.',
+        variant: "default",
+      });
     });
   };
   
@@ -153,12 +162,12 @@ const Navigation: React.FC = () => {
   };
   
   const navLinks = [
-    { to: '/', label: 'Home' },
-    { to: '/about', label: 'About' },
-    ...(isLoggedIn ? [{ to: '/dashboard', label: 'Dashboard' }] : []),
-    { to: '/arduino', label: 'Arduino' },
-    { to: '/download', label: 'Download' },
-    { to: '/contact', label: 'Contact' }
+    { to: '/', label: t('nav.home') },
+    { to: '/about', label: t('nav.about', 'About') },
+    ...(isLoggedIn ? [{ to: '/dashboard', label: t('nav.dashboard') }] : []),
+    { to: '/arduino', label: t('nav.arduino', 'Arduino') },
+    { to: '/download', label: t('nav.download', 'Download') },
+    { to: '/contact', label: t('nav.contact', 'Contact') }
   ];
   
   // RTL direction for Arabic language

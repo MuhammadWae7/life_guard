@@ -3,10 +3,8 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from "@/hooks/use-toast";
-import { useNavigate } from 'react-router-dom';
-const navigate = useNavigate();
 
 const SignupForm: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -15,7 +13,8 @@ const SignupForm: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [deviceId, setDeviceId] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
+  
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -52,9 +51,6 @@ const SignupForm: React.FC = () => {
       });
 
       // Redirect to dashboard directly
-      // Import useNavigate at the top of the file
-      const navigate = useNavigate();      
-      // Use React Router navigation
       navigate('/dashboard');
     } catch (error) {
       console.error('Signup error:', error);

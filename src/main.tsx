@@ -7,12 +7,17 @@ import i18n from './lib/i18n';
 // Set initial language from localStorage if available
 const savedLanguage = localStorage.getItem('language');
 if (savedLanguage && ['en', 'ar', 'fr'].includes(savedLanguage)) {
-  i18n.changeLanguage(savedLanguage);
-  // Set RTL for Arabic
-  document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+  i18n.changeLanguage(savedLanguage).then(() => {
+    // Set RTL for Arabic
+    document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+    
+    // Initialize the app after language is set
+    createRoot(document.getElementById("root")!).render(<App />);
+  });
+} else {
+  // If no saved language, just render the app with default language
+  createRoot(document.getElementById("root")!).render(<App />);
 }
-
-createRoot(document.getElementById("root")!).render(<App />);
 
 // Register service worker for PWA
 if ('serviceWorker' in navigator) {
