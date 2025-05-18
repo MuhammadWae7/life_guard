@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from '@/hooks/use-toast';
+import i18n from '@/lib/i18n'; // Import i18n
 
 const Navigation: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -72,30 +73,46 @@ const Navigation: React.FC = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
-    
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
     
     toast({
-      title: `Theme changed to ${newTheme} mode`,
-      description: "The application appearance has been updated.",
+      title: newTheme === 'light' ? 'Light Mode Activated' : 'Dark Mode Activated',
+      description: `The application theme has been changed to ${newTheme} mode.`,
       variant: "default",
     });
   };
-  
+
   const changeLanguage = (lang: 'en' | 'ar' | 'fr') => {
     setLanguage(lang);
     localStorage.setItem('language', lang);
     
+    // Change language in i18n
+    i18n.changeLanguage(lang);
+    
+    // Set RTL for Arabic
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    
+    // Translation messages based on selected language
+    const messages = {
+      en: {
+        title: 'Language Changed',
+        description: 'The application language has been updated to English.'
+      },
+      ar: {
+        title: 'تم تغيير اللغة',
+        description: 'تم تحديث لغة التطبيق إلى العربية.'
+      },
+      fr: {
+        title: 'Langue Changée',
+        description: 'La langue de l\'application a été mise à jour en français.'
+      }
+    };
+    
     toast({
-      title: `Language changed to ${getLanguageName(lang)}`,
-      description: "The application language has been updated.",
+      title: messages[lang].title,
+      description: messages[lang].description,
       variant: "default",
     });
-    // In a real app, this would trigger language change via i18n
   };
   
   const getLanguageName = (code: string) => {

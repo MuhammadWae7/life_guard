@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Translation resources
 const resources = {
@@ -11,64 +12,66 @@ const resources = {
       
       // Navigation
       'nav.home': 'Home',
-      'nav.about': 'About',
-      'nav.arduino': 'Arduino',
-      'nav.download': 'Download',
-      'nav.contact': 'Contact',
+      'nav.dashboard': 'Dashboard',
+      'nav.devices': 'Devices',
+      'nav.reports': 'Reports',
+      'nav.settings': 'Settings',
       'nav.login': 'Login',
       'nav.signup': 'Sign Up',
+      'nav.logout': 'Logout',
       
-      // Contact page
-      'contact.title': 'Contact Us',
-      'contact.subtitle': 'Have questions about your health monitor? Send us a message.',
-      'contact.name': 'Name',
-      'contact.email': 'Email',
-      'contact.subject': 'Subject',
-      'contact.message': 'Message',
-      'contact.send': 'Send Message',
-      'contact.response': 'We typically respond to inquiries within 24-48 hours.',
-      'contact.name.placeholder': 'Your name',
-      'contact.email.placeholder': 'name@example.com',
-      'contact.subject.placeholder': 'How can we help?',
-      'contact.message.placeholder': 'Your message...',
+      // Dashboard
+      'dashboard.title': 'Dashboard',
+      'dashboard.welcome': 'Welcome to Life Guard',
+      'dashboard.summary': 'Health Summary',
       
-      // Language
-      'language.changed': 'Language changed to English',
-      'language.updated': 'The application language has been updated.',
+      // Settings
+      'settings.language': 'Language',
+      'settings.theme': 'Theme',
+      'settings.notifications': 'Notifications',
+      'settings.profile': 'Profile',
+      
+      // Auth
+      'auth.email': 'Email',
+      'auth.password': 'Password',
+      'auth.login': 'Login',
+      'auth.signup': 'Sign Up',
+      'auth.forgotPassword': 'Forgot Password?',
     }
   },
   ar: {
     translation: {
       // Common
       'app.name': 'لايف جارد',
-      'app.tagline': 'مراقبة الصحة في الوقت الحقيقي',
+      'app.tagline': 'مراقبة صحية في الوقت الحقيقي',
       
       // Navigation
       'nav.home': 'الرئيسية',
-      'nav.about': 'حول',
-      'nav.arduino': 'أردوينو',
-      'nav.download': 'تحميل',
-      'nav.contact': 'اتصل بنا',
+      'nav.dashboard': 'لوحة التحكم',
+      'nav.devices': 'الأجهزة',
+      'nav.reports': 'التقارير',
+      'nav.settings': 'الإعدادات',
       'nav.login': 'تسجيل الدخول',
       'nav.signup': 'إنشاء حساب',
+      'nav.logout': 'تسجيل الخروج',
       
-      // Contact page
-      'contact.title': 'اتصل بنا',
-      'contact.subtitle': 'هل لديك أسئلة حول جهاز مراقبة صحتك؟ أرسل لنا رسالة.',
-      'contact.name': 'الاسم',
-      'contact.email': 'البريد الإلكتروني',
-      'contact.subject': 'الموضوع',
-      'contact.message': 'الرسالة',
-      'contact.send': 'إرسال الرسالة',
-      'contact.response': 'نحن عادة نرد على الاستفسارات في غضون 24-48 ساعة.',
-      'contact.name.placeholder': 'اسمك',
-      'contact.email.placeholder': 'name@example.com',
-      'contact.subject.placeholder': 'كيف يمكننا المساعدة؟',
-      'contact.message.placeholder': 'رسالتك...',
+      // Dashboard
+      'dashboard.title': 'لوحة التحكم',
+      'dashboard.welcome': 'مرحبًا بك في لايف جارد',
+      'dashboard.summary': 'ملخص الصحة',
       
-      // Language
-      'language.changed': 'تم تغيير اللغة إلى العربية',
-      'language.updated': 'تم تحديث لغة التطبيق.',
+      // Settings
+      'settings.language': 'اللغة',
+      'settings.theme': 'المظهر',
+      'settings.notifications': 'الإشعارات',
+      'settings.profile': 'الملف الشخصي',
+      
+      // Auth
+      'auth.email': 'البريد الإلكتروني',
+      'auth.password': 'كلمة المرور',
+      'auth.login': 'تسجيل الدخول',
+      'auth.signup': 'إنشاء حساب',
+      'auth.forgotPassword': 'نسيت كلمة المرور؟',
     }
   },
   fr: {
@@ -79,45 +82,47 @@ const resources = {
       
       // Navigation
       'nav.home': 'Accueil',
-      'nav.about': 'À propos',
-      'nav.arduino': 'Arduino',
-      'nav.download': 'Télécharger',
-      'nav.contact': 'Contact',
+      'nav.dashboard': 'Tableau de bord',
+      'nav.devices': 'Appareils',
+      'nav.reports': 'Rapports',
+      'nav.settings': 'Paramètres',
       'nav.login': 'Connexion',
-      'nav.signup': 'S\'inscrire',
+      'nav.signup': 'Inscription',
+      'nav.logout': 'Déconnexion',
       
-      // Contact page
-      'contact.title': 'Contactez-nous',
-      'contact.subtitle': 'Vous avez des questions sur votre moniteur de santé? Envoyez-nous un message.',
-      'contact.name': 'Nom',
-      'contact.email': 'Email',
-      'contact.subject': 'Sujet',
-      'contact.message': 'Message',
-      'contact.send': 'Envoyer le message',
-      'contact.response': 'Nous répondons généralement aux demandes dans les 24 à 48 heures.',
-      'contact.name.placeholder': 'Votre nom',
-      'contact.email.placeholder': 'nom@exemple.com',
-      'contact.subject.placeholder': 'Comment pouvons-nous vous aider?',
-      'contact.message.placeholder': 'Votre message...',
+      // Dashboard
+      'dashboard.title': 'Tableau de bord',
+      'dashboard.welcome': 'Bienvenue sur Life Guard',
+      'dashboard.summary': 'Résumé de santé',
       
-      // Language
-      'language.changed': 'Langue changée en français',
-      'language.updated': 'La langue de l\'application a été mise à jour.',
+      // Settings
+      'settings.language': 'Langue',
+      'settings.theme': 'Thème',
+      'settings.notifications': 'Notifications',
+      'settings.profile': 'Profil',
+      
+      // Auth
+      'auth.email': 'Email',
+      'auth.password': 'Mot de passe',
+      'auth.login': 'Connexion',
+      'auth.signup': 'Inscription',
+      'auth.forgotPassword': 'Mot de passe oublié?',
     }
   }
 };
 
 i18n
+  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'en', // Default language
     fallbackLng: 'en',
+    debug: process.env.NODE_ENV === 'development',
     interpolation: {
-      escapeValue: false // React already escapes values
+      escapeValue: false, // React already escapes values
     },
     react: {
-      useSuspense: false
+      useSuspense: false,
     }
   });
 

@@ -59,26 +59,17 @@ const LoginForm: React.FC = () => {
     setLoading(true);
     
     try {
-      // This would be replaced with actual authentication logic when connected to backend
-      // Using a secure API endpoint defined in environment variables
-      const API_URL = import.meta.env.VITE_AUTH_API_URL || '/api/auth';
-      
-      // In a real implementation, this would be an actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simulate successful login
-      // In production, you would store a JWT token instead of a boolean
-      sessionStorage.setItem('isLoggedIn', 'true');
+      // Store login info in localStorage instead of sessionStorage for persistence
+      localStorage.setItem('isLoggedIn', 'true');
       
       // In a real implementation, you would get the deviceId from the server response
-      // For demo purposes, we'll simulate retrieving it
-      const mockDeviceId = "GSM808-DEMO-1234"; // In a real app, this would come from your API
+      const mockDeviceId = "GSM808-DEMO-1234";
       
       // Use the login function from useAuth
       login("demo-jwt-token", mockDeviceId);
       
       // Store last login time for security purposes
-      sessionStorage.setItem('lastLoginTime', new Date().toISOString());
+      localStorage.setItem('lastLoginTime', new Date().toISOString());
       
       toast({
         title: "Success",

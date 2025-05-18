@@ -38,24 +38,19 @@ const SignupForm: React.FC = () => {
     setLoading(true);
 
     try {
-      // This would be replaced with actual registration logic when connected to backend
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Store the user data including deviceId in sessionStorage for demo purposes
-      // In a real app, this would be sent to your backend
-      sessionStorage.setItem('user_email', email);
-      sessionStorage.setItem('user_device_id', deviceId);
-      sessionStorage.setItem('user_name', fullName);
+      // Store the user data in localStorage instead of sessionStorage for persistence
+      localStorage.setItem('user_email', email);
+      localStorage.setItem('user_device_id', deviceId);
+      localStorage.setItem('user_name', fullName);
+      localStorage.setItem('isLoggedIn', 'true');
       
       toast({
         title: "Success",
-        description: "Account created successfully. Please check your email to verify your account.",
+        description: "Account created successfully.",
       });
 
-      // Redirect to login page
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 2000);
+      // Redirect to dashboard directly
+      window.location.href = '/dashboard';
     } catch (error) {
       console.error('Signup error:', error);
       toast({
