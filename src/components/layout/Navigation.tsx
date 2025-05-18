@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Menu, Moon, Sun, Globe, Download } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,9 +16,11 @@ import {
 } from "@/components/ui/sheet";
 import i18n from '@/lib/i18n';
 import { useTranslation } from 'react-i18next';
+import { Menu, Moon, Sun, Globe, Download, LogOut } from "lucide-react";
 
 const Navigation: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [language, setLanguage] = useState<'en' | 'ar' | 'fr'>('en');
   const [isInstallable, setIsInstallable] = useState(false);
@@ -31,6 +32,12 @@ const Navigation: React.FC = () => {
   useEffect(() => {
     const loginStatus = localStorage.getItem('isLoggedIn') === 'true';
     setIsLoggedIn(loginStatus);
+    
+    // Get user name from localStorage if logged in
+    if (loginStatus) {
+      const storedName = localStorage.getItem('user_name');
+      setUserName(storedName || 'User');
+    }
     
     // Check for saved theme preference
     const savedTheme = localStorage.getItem('theme');
@@ -243,9 +250,25 @@ const Navigation: React.FC = () => {
             {/* Login/Logout buttons for desktop */}
             <div className="hidden md:flex items-center space-x-2">
               {isLoggedIn ? (
-                <Button onClick={handleLogout} variant="outline" size="sm" className="dark:border-gray-700 dark:text-gray-200">
-                  Logout
-                </Button>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center">
+                      <span className="text-blue-600 dark:text-blue-300 font-medium text-sm">
+                        {userName.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{userName}</span>
+                  </div>
+                  <Button 
+                    onClick={handleLogout} 
+                    variant="outline" 
+                    size="sm" 
+                    className="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-200 dark:border-red-800/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-800/30"
+                  >
+                    <LogOut className="h-4 w-4 mr-1" />
+                    Logout
+                  </Button>
+                </div>
               ) : (
                 <>
                   <Link to="/login">
@@ -291,9 +314,24 @@ const Navigation: React.FC = () => {
                     
                     <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                       {isLoggedIn ? (
-                        <Button onClick={handleLogout} variant="outline" className="w-full justify-start text-left dark:border-gray-700 dark:text-gray-200">
-                          Logout
-                        </Button>
+                        <div className="space-y-3">
+                          <div className="flex items-center space-x-2 px-2 py-2">
+                            <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center">
+                              <span className="text-blue-600 dark:text-blue-300 font-medium text-sm">
+                                {userName.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{userName}</span>
+                          </div>
+                          <Button 
+                            onClick={handleLogout} 
+                            variant="outline" 
+                            className="w-full justify-start text-left bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-200 dark:border-red-800/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-800/30"
+                          >
+                            <LogOut className="h-4 w-4 mr-2" />
+                            Logout
+                          </Button>
+                        </div>
                       ) : (
                         <div className="space-y-2">
                           <Link to="/login" className="w-full">
