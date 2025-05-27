@@ -1,6 +1,4 @@
-
-// API endpoints for vital signs data
-// This file defines the expected API structure for your Arduino data
+import { supabase } from '../supabaseClient';
 
 export interface VitalSignsApiResponse {
   temperature: number;
@@ -10,49 +8,50 @@ export interface VitalSignsApiResponse {
   deviceId: string;
 }
 
-export interface ApiEndpoints {
-  // GET /api/vitals/latest/{deviceId} - Get latest readings
-  getLatestVitals: (deviceId: string) => Promise<VitalSignsApiResponse[]>;
-  
-  // POST /api/vitals - Submit new reading from Arduino
-  submitVitals: (data: Omit<VitalSignsApiResponse, 'timestamp'>) => Promise<void>;
-  
-  // GET /api/vitals/history/{deviceId}?limit=20 - Get historical data
-  getVitalsHistory: (deviceId: string, limit?: number) => Promise<VitalSignsApiResponse[]>;
-}
+export const getLatestVitals = async (deviceId: string): Promise<VitalSignsApiResponse | null> => {
+  const { data, error } = await supabase
+    .from('vitals')
+    .select('*')
+    .eq('device_id', deviceId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+  if (error) return null;
+  if (!data) return null;
+  return {
+    temperature: data.temperature,
+    heartRate: data.heart_rate,
+    spo2: data.spo2,
+    timestamp: data.created_at,
+    deviceId: data.device_id,
+  };
+};
 
-// Expected POST endpoint structure for Arduino to send data:
-// POST /api/vitals
-// Content-Type: application/json
-// 
-// Body:
-// {
-//   "deviceId": "your-device-id",
-//   "temperature": 36.5,
-//   "heartRate": 72,
-//   "spo2": 98.5
-// }
+export const submitVitals = async (data: Omit<VitalSignsApiResponse, 'timestamp'>): Promise<boolean> => {
+  const { error } = await supabase.from('vitals').insert([
+    {
+      temperature: data.temperature,
+      heart_rate: data.heartRate,
+      spo2: data.spo2,
+      device_id: data.deviceId,
+    },
+  ]);
+  return !error;
+};
 
-// Expected WebSocket message format from server:
-// {
-//   "temperature": 36.5,
-//   "heartRate": 72,
-//   "spo2": 98.5,
-//   "timestamp": "2024-01-15T10:30:00Z",
-//   "deviceId": "your-device-id"
-// }
-
-export const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-api-domain.com' 
-  : 'http://localhost:3001';
-
-export const WEBSOCKET_URL = process.env.NODE_ENV === 'production'
-  ? 'wss://your-api-domain.com'
-  : 'ws://localhost:3001';
-
-// Arduino code expectations:
-// 1. Send HTTP POST requests to /api/vitals endpoint
-// 2. Include deviceId in the request body
-// 3. Send temperature (float), heartRate (int), spo2 (float)
-// 4. Server will add timestamp automatically
-// 5. WebSocket will broadcast to connected clients
+export const getVitalsHistory = async (deviceId: string, limit = 20): Promise<VitalSignsApiResponse[]> => {
+  const { data, error } = await supabase
+    .from('vitals')
+    .select('*')
+    .eq('device_id', deviceId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error || !data) return [];
+  return data.map((row: any) => ({
+    temperature: row.temperature,
+    heartRate: row.heart_rate,
+    spo2: row.spo2,
+    timestamp: row.created_at,
+    deviceId: row.device_id,
+  }));
+};
