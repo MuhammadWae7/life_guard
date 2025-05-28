@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { PrismaClient } = require('@prisma/client');
 const authMiddleware = require('./middleware/auth');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,6 +36,14 @@ app.post('/api/vitals', authMiddleware, async (req, res) => {
   broadcastNewVital(vital);
   res.json({ success: true });
 });
+
+if (true) { // Always serve frontend for single-service deployment
+  const distPath = path.join(__dirname, 'dist');
+  app.use(express.static(distPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 server.listen(PORT, () => {
   console.log(`API server (HTTP+WebSocket) running on port ${PORT}`);
