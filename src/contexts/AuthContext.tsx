@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface User {
@@ -30,6 +29,8 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +38,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Check for existing session
     const savedUser = localStorage.getItem('lifeguard_user');
-    if (savedUser) {
+    const token = localStorage.getItem('token');
+    if (savedUser && token) {
       setUser(JSON.parse(savedUser));
     }
     setLoading(false);
@@ -45,17 +47,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Simulate API call - replace with actual API integration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockUser: User = {
-        id: '1',
-        email,
-        deviceId: 'LG-' + Math.random().toString(36).substr(2, 8).toUpperCase()
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('lifeguard_user', JSON.stringify(mockUser));
+      const res = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password }),
+      });
+      if (!res.ok) return false;
+      const { token } = await res.json();
+      localStorage.setItem('token', token);
+      // Fetch user profile (simulate for now)
+      // In production, backend should return user info
+      setUser({ id: email, email, deviceId: email });
+      localStorage.setItem('lifeguard_user', JSON.stringify({ id: email, email, deviceId: email }));
       return true;
     } catch (error) {
       console.error('Login error:', error);
@@ -65,17 +68,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Simulate API call - replace with actual API integration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockUser: User = {
-        id: Math.random().toString(36).substr(2, 9),
-        email,
-        deviceId: 'LG-' + Math.random().toString(36).substr(2, 8).toUpperCase()
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('lifeguard_user', JSON.stringify(mockUser));
+      const res = await fetch(`${API_BASE_URL}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password }),
+      });
+      if (!res.ok) return false;
+      const { token } = await res.json();
+      localStorage.setItem('token', token);
+      setUser({ id: email, email, deviceId: email });
+      localStorage.setItem('lifeguard_user', JSON.stringify({ id: email, email, deviceId: email }));
       return true;
     } catch (error) {
       console.error('Registration error:', error);
@@ -86,6 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('lifeguard_user');
+    localStorage.removeItem('token');
   };
 
   const value: AuthContextType = {

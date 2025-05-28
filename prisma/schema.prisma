@@ -1,0 +1,29 @@
+// Prisma schema for vital signs and users
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  token     String   @unique
+  deviceId  String   @unique
+  vitals    Vital[]
+}
+
+model Vital {
+  id         String   @id @default(uuid())
+  temperature Float
+  heartRate   Int
+  spo2        Float
+  timestamp   DateTime @default(now())
+  deviceId    String
+  user        User     @relation(fields: [deviceId], references: [deviceId])
+}

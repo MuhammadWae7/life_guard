@@ -1,17 +1,17 @@
-
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Menu, Sun, Moon, Globe, User, LogOut, Heart } from 'lucide-react';
+} from "@/components/ui/dropdown-menu";
+import { Menu, Sun, Moon, Globe, User, LogOut, Heart } from "lucide-react";
+// You can import another icon from lucide-react or use a placeholder below
 
 const Header = () => {
   const { t, i18n } = useTranslation();
@@ -23,19 +23,19 @@ const Header = () => {
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
   };
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   const navItems = [
-    { key: 'home', path: '/' },
-    { key: 'about', path: '/about' },
-    { key: 'arduino', path: '/arduino' },
-    { key: 'contact', path: '/contact' },
+    { key: "home", path: "/" },
+    { key: "about", path: "/about" },
+    { key: "arduino", path: "/arduino" },
+    { key: "contact", path: "/contact" },
   ];
 
   const isActivePath = (path: string) => {
@@ -48,10 +48,10 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <div className="bg-gradient-to-r from-blue-500 to-green-500 p-2 rounded-lg group-hover:scale-105 transition-transform duration-200">
-              <Heart className="h-5 w-5 text-white" />
+            <div className="bg-gradient-to-r from-blue-500 to-green-500 p-2 rounded-lg group-hover:scale-110 transition-transform duration-300">
+              <Heart className="h-6 w-6 text-white" />
             </div>
-            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+            <span className="text-lg font-extrabold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent tracking-wide animate-gradient-x">
               Life Guard
             </span>
           </Link>
@@ -64,8 +64,8 @@ const Header = () => {
                 to={item.path}
                 className={`text-sm font-medium transition-colors duration-200 hover:text-blue-600 dark:hover:text-blue-400 ${
                   isActivePath(item.path)
-                    ? 'text-blue-600 dark:text-blue-400'
-                    : 'text-gray-600 dark:text-gray-300'
+                    ? "text-blue-600 dark:text-blue-400"
+                    : "text-gray-600 dark:text-gray-300"
                 }`}
               >
                 {t(item.key)}
@@ -83,10 +83,10 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-white dark:bg-gray-800">
-                <DropdownMenuItem onClick={() => handleLanguageChange('en')}>
+                <DropdownMenuItem onClick={() => handleLanguageChange("en")}>
                   English
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleLanguageChange('ar')}>
+                <DropdownMenuItem onClick={() => handleLanguageChange("ar")}>
                   العربية
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -94,14 +94,22 @@ const Header = () => {
 
             {/* Theme Toggle */}
             <Button variant="ghost" size="sm" onClick={toggleTheme}>
-              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {isDark ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
             </Button>
 
             {/* Auth Buttons */}
             {isAuthenticated ? (
               <>
                 <Link to="/dashboard">
-                  <Button variant="outline" size="sm" className="hidden md:flex">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="hidden md:flex"
+                  >
                     Dashboard
                   </Button>
                 </Link>
@@ -127,9 +135,7 @@ const Header = () => {
                   </Button>
                 </Link>
                 <Link to="/register">
-                  <Button size="sm">
-                    Register
-                  </Button>
+                  <Button size="sm">Register</Button>
                 </Link>
               </div>
             )}
@@ -156,8 +162,8 @@ const Header = () => {
                   to={item.path}
                   className={`text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 ${
                     isActivePath(item.path)
-                      ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      ? "bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400"
+                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -167,7 +173,11 @@ const Header = () => {
               {!isAuthenticated && (
                 <div className="flex flex-col space-y-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                   <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                    >
                       Login
                     </Button>
                   </Link>

@@ -1,5 +1,3 @@
-import { supabase } from '../supabaseClient';
-
 export interface VitalSignsApiResponse {
   temperature: number;
   heartRate: number;
@@ -8,50 +6,36 @@ export interface VitalSignsApiResponse {
   deviceId: string;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+
+function getToken() {
+  return localStorage.getItem('token');
+}
+
 export const getLatestVitals = async (deviceId: string): Promise<VitalSignsApiResponse | null> => {
-  const { data, error } = await supabase
-    .from('vitals')
-    .select('*')
-    .eq('device_id', deviceId)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
-  if (error) return null;
-  if (!data) return null;
-  return {
-    temperature: data.temperature,
-    heartRate: data.heart_rate,
-    spo2: data.spo2,
-    timestamp: data.created_at,
-    deviceId: data.device_id,
-  };
+  const res = await fetch(`${API_BASE_URL}/vitals/latest/${deviceId}`, {
+    headers: { Authorization: getToken() || '' },
+  });
+  if (!res.ok) return null;
+  return await res.json();
 };
 
 export const submitVitals = async (data: Omit<VitalSignsApiResponse, 'timestamp'>): Promise<boolean> => {
-  const { error } = await supabase.from('vitals').insert([
-    {
-      temperature: data.temperature,
-      heart_rate: data.heartRate,
-      spo2: data.spo2,
-      device_id: data.deviceId,
+  const res = await fetch(`${API_BASE_URL}/vitals`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: getToken() || '',
     },
-  ]);
-  return !error;
+    body: JSON.stringify(data),
+  });
+  return res.ok;
 };
 
 export const getVitalsHistory = async (deviceId: string, limit = 20): Promise<VitalSignsApiResponse[]> => {
-  const { data, error } = await supabase
-    .from('vitals')
-    .select('*')
-    .eq('device_id', deviceId)
-    .order('created_at', { ascending: false })
-    .limit(limit);
-  if (error || !data) return [];
-  return data.map((row: any) => ({
-    temperature: row.temperature,
-    heartRate: row.heart_rate,
-    spo2: row.spo2,
-    timestamp: row.created_at,
-    deviceId: row.device_id,
-  }));
+  const res = await fetch(`${API_BASE_URL}/vitals/history/${deviceId}?limit=${limit}`, {
+    headers: { Authorization: getToken() || '' },
+  });
+  if (!res.ok) return [];
+  return await res.json();
 };

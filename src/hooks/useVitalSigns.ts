@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { getLatestVitals, getVitalsHistory } from '../api/vitalsApi';
 
 interface VitalSigns {
   temperature: number;
@@ -30,84 +30,65 @@ export const useVitalSigns = (deviceId: string | undefined) => {
       setData(prev => ({ ...prev, isLoading: false, error: 'No device ID provided' }));
       return;
     }
-
-    let subscription: any = null;
     let isMounted = true;
-
+    let ws: WebSocket | null = null;
     const fetchVitals = async () => {
       setData(prev => ({ ...prev, isLoading: true, error: null }));
-      const { data: readings, error } = await supabase
-        .from('vitals')
-        .select('*')
-        .eq('device_id', deviceId)
-        .order('created_at', { ascending: false })
-        .limit(20);
-      if (error) {
-        setData(prev => ({ ...prev, isLoading: false, error: error.message }));
-        return;
-      }
-      if (readings && readings.length > 0) {
-        const latest = readings[0];
-        setData(prev => ({
-          ...prev,
-          current: {
+      try {
+        const latest = await getLatestVitals(deviceId);
+        const history = await getVitalsHistory(deviceId, 20);
+        if (!isMounted) return;
+        setData({
+          current: latest ? {
             temperature: latest.temperature,
-            heartRate: latest.heart_rate,
+            heartRate: latest.heartRate,
             spo2: latest.spo2,
-            timestamp: new Date(latest.created_at)
-          },
-          history: readings.map((r: any) => ({
+            timestamp: new Date(latest.timestamp)
+          } : null,
+          history: history.map(r => ({
             temperature: r.temperature,
-            heartRate: r.heart_rate,
+            heartRate: r.heartRate,
             spo2: r.spo2,
-            timestamp: new Date(r.created_at)
+            timestamp: new Date(r.timestamp)
           })),
-          isConnected: true,
+          isConnected: !!latest,
           isLoading: false,
           error: null
-        }));
-      } else {
-        setData(prev => ({ ...prev, isLoading: false, error: null, current: null, history: [] }));
+        });
+      } catch (e: any) {
+        setData(prev => ({ ...prev, isLoading: false, error: e.message }));
       }
     };
-
     fetchVitals();
 
-    // Subscribe to real-time inserts for this device
-    subscription = supabase
-      .channel('vitals-realtime')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'vitals', filter: `device_id=eq.${deviceId}` },
-        (payload) => {
-          const newReading = payload.new;
-          if (!isMounted) return;
-          setData(prev => {
-            const vitalSigns: VitalSigns = {
-              temperature: newReading.temperature,
-              heartRate: newReading.heart_rate,
-              spo2: newReading.spo2,
-              timestamp: new Date(newReading.created_at)
-            };
-            return {
-              ...prev,
-              current: vitalSigns,
-              history: [vitalSigns, ...prev.history].slice(0, 20),
-              isConnected: true,
-              isLoading: false,
-              error: null
-            };
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      isMounted = false;
-      if (subscription) {
-        supabase.removeChannel(subscription);
+    // WebSocket for real-time updates
+    const wsUrl = (import.meta.env.VITE_WS_URL || 'ws://localhost:3001').replace(/^http/, 'ws');
+    ws = new window.WebSocket(wsUrl);
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === 'new_vital' && msg.data.deviceId === deviceId) {
+        setData(prev => {
+          const vital = {
+            temperature: msg.data.temperature,
+            heartRate: msg.data.heartRate,
+            spo2: msg.data.spo2,
+            timestamp: new Date(msg.data.timestamp)
+          };
+          return {
+            ...prev,
+            current: vital,
+            history: [vital, ...prev.history].slice(0, 20),
+            isConnected: true,
+            isLoading: false,
+            error: null
+          };
+        });
       }
     };
+    ws.onerror = () => setData(prev => ({ ...prev, isConnected: false }));
+    ws.onclose = () => setData(prev => ({ ...prev, isConnected: false }));
+
+    return () => { isMounted = false; ws && ws.close(); };
   }, [deviceId]);
 
   return data;
