@@ -1,5 +1,8 @@
 import type { VitalSigns } from "@/types/health"
-import { apiConfig } from "./api-config"
+import { getApiConfig } from "./config"
+import { websocketAuth } from "./websocket-auth"
+import { storageService } from "./storage-service"
+import logger from "./logger"
 
 type MessageHandler = (data: VitalSigns) => void
 type ErrorHandler = (error: string) => void
@@ -11,85 +14,137 @@ export class WebSocketService {
   private errorHandlers: ErrorHandler[] = []
   private statusHandlers: StatusHandler[] = []
   private reconnectAttempts = 0
-  private maxReconnectAttempts = apiConfig.retryAttempts
+  private maxReconnectAttempts: number
   private reconnectTimeout: NodeJS.Timeout | null = null
   private isManuallyDisconnected = false
   private heartbeatInterval: NodeJS.Timeout | null = null
+  private deviceId: string | null = null
+  private apiKey: string | null = null
 
-  constructor(private url: string = process.env.NEXT_PUBLIC_WEBSOCKET_URL || "wss://ws.lifeguard.com") {}
+  constructor(
+    private url: string = getApiConfig().websocketUrl,
+    maxReconnectAttempts: number = 3
+  ) {
+    this.maxReconnectAttempts = maxReconnectAttempts
+  }
+
+  setCredentials(deviceId: string, apiKey: string) {
+    this.deviceId = deviceId
+    this.apiKey = apiKey
+  }
 
   connect() {
     if (this.socket?.readyState === WebSocket.OPEN) return
-
-    // Don't try to connect if manually disconnected
     if (this.isManuallyDisconnected) return
 
+    if (!this.deviceId || !this.apiKey) {
+      this.notifyError("Missing device credentials")
+      return
+    }
+
     try {
-      // Use WebSocket URL without API key (authentication handled server-side)
       this.socket = new WebSocket(this.url)
 
       this.socket.onopen = () => {
-        console.log("WebSocket connected to:", this.url)
+        logger.info("WebSocket connected", { url: this.url })
         this.reconnectAttempts = 0
         this.isManuallyDisconnected = false
         this.notifyStatus("connected")
         this.startHeartbeat()
+        this.authenticate()
       }
 
-      this.socket.onmessage = (event) => {
+      this.socket.onmessage = async (event) => {
         try {
           const data = JSON.parse(event.data)
 
           // Handle different message types
           if (data.type === "vital_signs") {
+            if (!this.deviceId || !websocketAuth.isAuthenticated(this.deviceId)) {
+              this.notifyError("Device not authenticated")
+              return
+            }
+
             const vitalSigns = this.validateVitalSigns(data.payload)
             if (vitalSigns) {
+              // Store the data
+              await storageService.storeVitalSigns({
+                ...vitalSigns,
+                deviceId: this.deviceId,
+              })
+
+              // Notify handlers
               this.messageHandlers.forEach((handler) => handler(vitalSigns))
             }
+          } else if (data.type === "auth_response") {
+            if (data.success) {
+              logger.info("WebSocket authentication successful", {
+                deviceId: this.deviceId,
+              })
+            } else {
+              this.notifyError(data.error || "Authentication failed")
+              this.socket?.close()
+            }
           } else if (data.type === "heartbeat") {
-            // Handle heartbeat response
-            console.log("Heartbeat received")
+            logger.debug("Heartbeat received")
           } else if (data.type === "error") {
             this.notifyError(data.message || "Unknown server error")
           }
         } catch (error) {
-          console.error("Error parsing WebSocket message:", error)
+          logger.error("Error parsing WebSocket message", { error })
           this.notifyError("Failed to parse incoming data")
         }
       }
 
       this.socket.onclose = (event) => {
-        console.log("WebSocket disconnected. Code:", event.code, "Reason:", event.reason)
+        logger.info("WebSocket disconnected", {
+          code: event.code,
+          reason: event.reason,
+        })
         this.notifyStatus("disconnected")
         this.stopHeartbeat()
 
-        // Only attempt reconnect if not manually disconnected and within retry limits
+        if (this.deviceId) {
+          websocketAuth.removeDevice(this.deviceId)
+        }
+
         if (!this.isManuallyDisconnected && this.reconnectAttempts < this.maxReconnectAttempts) {
           this.attemptReconnect()
         } else if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-          this.notifyError("Unable to connect to health monitoring device. Please check your connection.")
+          this.notifyError("Unable to connect to health monitoring device")
         }
       }
 
       this.socket.onerror = (error) => {
-        console.error("WebSocket connection error:", error)
+        logger.error("WebSocket connection error", { error })
         this.notifyStatus("error")
 
-        // Provide more specific error messages
         if (this.socket?.readyState === WebSocket.CONNECTING) {
-          this.notifyError("Failed to connect to health monitoring service. Please check your internet connection.")
+          this.notifyError("Failed to connect to health monitoring service")
         } else {
-          this.notifyError("Connection to health monitoring service lost.")
+          this.notifyError("Connection to health monitoring service lost")
         }
 
-        // Close the socket to trigger reconnection logic
         this.socket?.close()
       }
     } catch (error) {
-      console.error("Failed to create WebSocket connection:", error)
-      this.notifyError("Failed to establish connection to health monitoring service.")
+      logger.error("Failed to create WebSocket connection", { error })
+      this.notifyError("Failed to establish connection")
       this.attemptReconnect()
     }
+  }
+
+  private authenticate() {
+    if (!this.deviceId || !this.apiKey || !this.socket) return
+
+    const authMessage = {
+      type: "auth",
+      deviceId: this.deviceId,
+      apiKey: this.apiKey,
+      timestamp: new Date().toISOString(),
+    }
+
+    this.socket.send(JSON.stringify(authMessage))
   }
 
   disconnect() {
@@ -107,18 +162,14 @@ export class WebSocketService {
       this.socket = null
     }
 
+    if (this.deviceId) {
+      websocketAuth.removeDevice(this.deviceId)
+    }
+
     this.reconnectAttempts = 0
     this.notifyStatus("disconnected")
   }
 
-  // Send message to server
-  send(message: any) {
-    if (this.socket?.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(message))
-    }
-  }
-
-  // Heartbeat to keep connection alive
   private startHeartbeat() {
     this.heartbeatInterval = setInterval(() => {
       if (this.socket?.readyState === WebSocket.OPEN) {
@@ -134,7 +185,6 @@ export class WebSocketService {
     }
   }
 
-  // Validate incoming vital signs data
   private validateVitalSigns(data: any): VitalSigns | null {
     if (!data || typeof data !== "object") return null
 
@@ -153,6 +203,12 @@ export class WebSocketService {
       heartRate,
       temperature,
       spO2,
+    }
+  }
+
+  send(message: any) {
+    if (this.socket?.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify(message))
     }
   }
 
@@ -194,11 +250,13 @@ export class WebSocketService {
     }
 
     this.reconnectAttempts++
-    const delay = Math.min(apiConfig.retryDelay * Math.pow(2, this.reconnectAttempts), 10000) // Max 10 seconds
+    const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 10000)
 
-    console.log(
-      `Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
-    )
+    logger.info("Attempting to reconnect", {
+      attempt: this.reconnectAttempts,
+      maxAttempts: this.maxReconnectAttempts,
+      delay,
+    })
 
     this.notifyStatus("reconnecting")
 

@@ -8,14 +8,15 @@ import { AuthProvider } from "@/contexts/auth-context"
 import { Navigation } from "@/components/navigation"
 import { PWAInstall } from "@/components/pwa-install"
 import { MouseFollower } from "@/components/mouse-follower"
+import { ErrorBoundary } from "@/components/error-boundary"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "LifeGuard - Health Monitoring Platform",
-  description:
-    "Advanced health monitoring platform using Arduino Uno to read vital signs and provide real-time health alerts",
-  keywords: ["health", "monitoring", "arduino", "vital signs", "medical", "IoT"],
+  title: "LifeGuard - Health Monitoring System",
+  description: "Real-time health monitoring system with Arduino integration",
+  keywords: ["health", "monitoring", "arduino", "vital signs", "medical"],
   authors: [{ name: "LifeGuard Team" }],
   creator: "LifeGuard Team",
   publisher: "LifeGuard",
@@ -33,12 +34,10 @@ export const metadata: Metadata = {
     title: "LifeGuard - Health Monitoring Platform",
     description: "Advanced health monitoring platform using Arduino Uno technology",
   },
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
-  ],
-    generator: 'v0.dev'
+  viewport: "width=device-width, initial-scale=1",
+  themeColor: "#ffffff",
+  manifest: "/manifest.json",
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -65,10 +64,13 @@ export default function RootLayout({
         >
           <LanguageProvider>
             <AuthProvider>
-              <Navigation />
-              <main className="min-h-screen">{children}</main>
-              <PWAInstall />
-              <MouseFollower />
+              <ErrorBoundary>
+                <Navigation />
+                <main className="min-h-screen">{children}</main>
+                <PWAInstall />
+                <MouseFollower />
+                <Toaster />
+              </ErrorBoundary>
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
