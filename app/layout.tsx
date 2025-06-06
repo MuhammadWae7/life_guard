@@ -55,7 +55,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="LifeGuard" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} fallback-font`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -72,17 +72,7 @@ export default function RootLayout({
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js');
-                });
-              }
-            `,
-          }}
-        />
+        <script src="/sw-register.js" defer></script>
       </body>
     </html>
   )

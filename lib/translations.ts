@@ -16,6 +16,12 @@ export const translations = {
     getStarted: "Get Started",
     learnMore: "Learn More",
 
+    // Additional Keys for Home Page
+    homePageTitle: "Welcome to LifeGuard",
+    homePageDescription: "Monitor your health in real-time with advanced IoT technology.",
+    getStartedAriaLabel: "Get started with LifeGuard",
+    learnMoreAriaLabel: "Learn more about LifeGuard",
+
     // Features
     featuresTitle: "Key Features",
     realTimeMonitoring: "Real-time Monitoring",

@@ -2,12 +2,23 @@
 
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ChevronDown } from "lucide-react"
+import dynamic from "next/dynamic"
+
+// Lazy load the ChevronDown icon for better performance
+const ChevronDown = dynamic(() => import("lucide-react").then(mod => mod.ChevronDown))
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Accordion Root Component
+ * Provides a container for accordion items.
+ */
 const Accordion = AccordionPrimitive.Root
 
+/**
+ * Accordion Item Component
+ * Represents a single collapsible section within the accordion.
+ */
 const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
@@ -20,6 +31,10 @@ const AccordionItem = React.forwardRef<
 ))
 AccordionItem.displayName = "AccordionItem"
 
+/**
+ * Accordion Trigger Component
+ * Acts as the clickable header for an accordion item.
+ */
 const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
@@ -31,6 +46,7 @@ const AccordionTrigger = React.forwardRef<
         "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
         className
       )}
+      aria-expanded={props["data-state"] === "open"}
       {...props}
     >
       {children}
@@ -40,6 +56,10 @@ const AccordionTrigger = React.forwardRef<
 ))
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 
+/**
+ * Accordion Content Component
+ * Contains the collapsible content for an accordion item.
+ */
 const AccordionContent = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
@@ -52,7 +72,6 @@ const AccordionContent = React.forwardRef<
     <div className={cn("pb-4 pt-0", className)}>{children}</div>
   </AccordionPrimitive.Content>
 ))
-
 AccordionContent.displayName = AccordionPrimitive.Content.displayName
 
 export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }

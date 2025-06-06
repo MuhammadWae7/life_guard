@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
+    "allowJs": false, // Enforce TypeScript usage
     "target": "ES6",
-    "skipLibCheck": true,
+    "skipLibCheck": false, // Enable library type checking
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -20,8 +20,18 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/tailwindcss/types" // Include Tailwind CSS types
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "types/**/*.d.ts" // Include custom type declarations
+  ],
   "exclude": ["node_modules"]
 }
